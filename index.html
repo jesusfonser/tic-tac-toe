@@ -9,14 +9,45 @@
         for (let i = 0; i < rows; i++){
             board[i] = [];
             for (let j = 0; j < columns; j++){
-                board[i][j] = "-";
+                board[i][j] = Cell();
+            }
+        }
+        
+        const printBoard = () => {
+            
+            let boardPrinted = [[],[],[]]
+            
+            for (let i = 0; i < rows; i++){
+                for (let j = 0; j < columns; j++){
+                    boardPrinted[i][j] = board[i][j].getOwner();
+                }
+                console.log(boardPrinted[i]);
             }
         }
 
-        console.log(board);
-
+        return {board, printBoard};
     })();
 
-    
+
+    function Cell(){
+
+        let owner = "-";
+
+        const getOwner = () => owner;
+
+        const claim = (player) => {
+
+            if (owner !== "-") 
+            console.log("Casilla ya ocupada.");
+            
+            else{
+                owner = player;
+                gameboard.printBoard()
+            }
+        } 
+
+        return {getOwner, claim};
+
+    }
 
 </script>
