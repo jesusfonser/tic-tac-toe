@@ -2,19 +2,17 @@
 
     const gameboard = (function(){
         
-        let board = [];
+        let board = [[],[],[]];
         const rows = 3;
         const columns = 3;
 
         for (let i = 0; i < rows; i++){
-            board[i] = [];
             for (let j = 0; j < columns; j++){
                 board[i][j] = Cell();
             }
         }
         
         const printBoard = () => {
-            
             let boardPrinted = [[],[],[]]
             
             for (let i = 0; i < rows; i++){
@@ -25,7 +23,59 @@
             }
         }
 
-        return {board, printBoard};
+        function checkEndHor(){
+            for (let i = 0; i < rows; i++){
+                if (board[i].every((e) => e.getOwner() === board[i][0].getOwner()) &&
+                    board[i][0].getOwner() !== "-"){
+                    console.log("Fin de la partida por victoria horizontal.");
+                } 
+            }
+        }
+
+        function checkEndVer(){
+            let arrVer = [];
+            for (let i = 0; i < rows; i++){
+                for (let j = 0; j < columns; j++){
+                    arrVer.push(board[j][i].getOwner());
+                }
+                if (arrVer.every((e) => e === arrVer[0]) && arrVer[0] !== "-"){
+                    console.log("Fin de la partida por victoria vertical.");
+                }
+                else arrVer = [];
+            }
+        }
+
+        function checkEndDiag(){
+            let arrDiag1 = [];
+            let arrDiag2 = [];
+
+            for (let i = 0; i < rows; i++){
+                arrDiag1.push(board[i][i].getOwner())
+            }
+
+            let x = 2;
+            for (let i = 0; i <= 2; i++){
+                arrDiag2.push(board[i][x].getOwner());
+                x--;
+            }
+
+            if  (
+                (arrDiag1.every((e) => e === arrDiag1[0]) &&
+                arrDiag1[0] !== "-") ||
+                (arrDiag2.every((e) => e === arrDiag2[0]) &&
+                arrDiag2[0] !== "-")
+                ){
+                    console.log("Fin de la partida por victoria diagonal.")
+                }
+        }
+
+        const checkEnd = () => {
+            checkEndHor();
+            checkEndVer();
+            checkEndDiag();
+        }
+
+        return {board, printBoard, checkEnd};
     })();
 
 
@@ -34,15 +84,15 @@
         let owner = "-";
 
         const getOwner = () => owner;
-
+        
         const claim = (player) => {
-
             if (owner !== "-") 
             console.log("Casilla ya ocupada.");
             
             else{
                 owner = player;
-                gameboard.printBoard()
+                gameboard.printBoard();
+                gameboard.checkEnd();
             }
         } 
 
