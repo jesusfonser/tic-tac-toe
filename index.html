@@ -28,7 +28,7 @@
 
     const gameflow = (function (){
 
-        let jugador = 1;
+        
 
         function checkEndHor(){
             for (let i = 0; i < rows; i++){
@@ -83,6 +83,7 @@
         }
 
 
+
         return {checkEnd}
 
     })()
@@ -108,18 +109,12 @@
 
     }
 
-    function Player(){
+    function Player(simbolo, numero){
 
-        let simbolo = "-";
-        let numero = "0";
-
-        let getSimbolo = () => simbolo;
-        let setSimbolo = (x) => simbolo = x;
-
-        let getNumero = () => numero;
-        let setNumero = (x) => numero = x;
+        let simbolo = simbolo;
+        let numero = numero;
         
-        return {getSimbolo, setSimbolo, getNumero, setNumero}
+        return {simbolo, numero}
     
     }
 
