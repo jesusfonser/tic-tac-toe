@@ -82,6 +82,7 @@
             checkEndDiag();
         }
 
+
         return {checkEnd}
 
     })()
@@ -105,6 +106,21 @@
 
         return {getOwner, claim};
 
+    }
+
+    function Player(){
+
+        let simbolo = "-";
+        let numero = "0";
+
+        let getSimbolo = () => simbolo;
+        let setSimbolo = (x) => simbolo = x;
+
+        let getNumero = () => numero;
+        let setNumero = (x) => numero = x;
+        
+        return {getSimbolo, setSimbolo, getNumero, setNumero}
+    
     }
 
 </script>
