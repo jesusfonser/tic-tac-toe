@@ -23,6 +23,13 @@
             }
         }
 
+        return {board, printBoard};
+    })();
+
+    const gameflow = (function (){
+
+        let jugador = 1;
+
         function checkEndHor(){
             for (let i = 0; i < rows; i++){
                 if (board[i].every((e) => e.getOwner() === board[i][0].getOwner()) &&
@@ -75,9 +82,9 @@
             checkEndDiag();
         }
 
-        return {board, printBoard, checkEnd};
-    })();
+        return {checkEnd}
 
+    })()
 
     function Cell(){
 
@@ -92,7 +99,7 @@
             else{
                 owner = player;
                 gameboard.printBoard();
-                gameboard.checkEnd();
+                gameflow.checkEnd();
             }
         } 
 
