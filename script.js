@@ -26,13 +26,17 @@ const gameboard = (function(){
 
 const gameflow = (function (){
 
-    let jugadores = [Player("O", 1), Player("X", 2)];
-    let currentPlayer = jugadores[0];
+    let jugadores = [];
     let fin = false;
+    let currentPlayer = undefined;
 
     const getFin = () => fin;
 
     const getCurrentPlayer = () => currentPlayer;
+
+    const setCurrentPlayer = () => currentPlayer = jugadores[0];
+
+    const addPlayer = (player) => jugadores.push(player);
 
     function changeTurn (){
         currentPlayer === jugadores[0] ? currentPlayer = jugadores[1] :
@@ -95,7 +99,7 @@ const gameflow = (function (){
         if(!fin) changeTurn();
     }
 
-    return {checkEnd, getFin, getCurrentPlayer}
+    return {checkEnd, getFin, getCurrentPlayer, setCurrentPlayer, addPlayer}
 
 })()
 
@@ -120,18 +124,19 @@ function Cell(){
 
 }
 
-function Player(simboloIn, numeroIn){
+function Player(simboloIn, nombreIn){
 
     let simbolo = simboloIn;
-    let numero = numeroIn;
+    let nombre = nombreIn;
 
-    return {simbolo, numero}
+    return {simbolo, nombre}
 
 }
 
 
 const DOMcontroller = (function() {
 
+    const body = document.querySelector("body");
     const divboard = document.getElementById("gameboard");
     const elh2 = document.getElementById("texto");
     const casillasDOM = Array.from(document.querySelectorAll("#gameboard > div"));
@@ -145,10 +150,59 @@ const DOMcontroller = (function() {
         div.appendChild(img);
     }
 
-    const gameStart = (element) => {
+    const validateInputs = () => {
+        let names = []
+        const inputs = Array.from(document.querySelectorAll("input"));
+        const buttonAccept = document.getElementById("names");
+        const divInputs = document.getElementById("inputs");
 
-        element.remove()
-        elh2.textContent = "Es el turno del jugador 1.";
+        for (input of inputs){
+            if (!input.value){
+                input.setAttribute("style", "border-color: red;");
+            } 
+
+            else{
+                input.setAttribute("style", "border-color: black");
+                names.push(input.value);
+            }
+        }
+    
+        if (names.length === 2){
+            gameflow.addPlayer(Player("O", names[0]));
+            gameflow.addPlayer(Player("X", names[1]));
+            gameflow.setCurrentPlayer();
+            buttonAccept.remove();
+            divInputs.remove();
+            gameStart();
+        }
+    }
+
+
+    const nombres = () => {
+
+        document.getElementById("start").remove();
+        elh2.textContent = "¡Poned vuestros nombres!"
+
+        let input1 = document.createElement("input");
+        let input2 = document.createElement("input");
+        let aceptar = document.createElement("button");
+
+        let divInput = document.createElement("div");
+        divInput.setAttribute("id", "inputs");
+
+        aceptar.textContent = "Comenzar";
+        aceptar.setAttribute("onclick", "DOMcontroller.validateInputs()");
+        aceptar.setAttribute("id", "names");
+
+        divInput.appendChild(input1);
+        divInput.appendChild(input2);
+        body.appendChild(divInput);
+        body.appendChild(aceptar);
+    }
+
+    function gameStart() {
+
+        elh2.textContent = `Es el turno de ${gameflow.getCurrentPlayer().nombre}.`;
 
         for (let i = 0; i < 3; i++){
             for (let j = 0; j < 3; j++){
@@ -160,12 +214,12 @@ const DOMcontroller = (function() {
                         gameboard.board[i][j].claim(gameflow.getCurrentPlayer().simbolo);
                         
                         if (gameflow.getFin()){
-                            elh2.textContent = `El ganador es... ¡¡EL JUGADOR ${gameflow.getCurrentPlayer().numero}!!`;
+                            elh2.textContent = `El ganador es... ¡¡${gameflow.getCurrentPlayer().nombre}!!`;
                         }
                         else {
                             turno++
                             turno === 9 ? elh2.textContent = "¡Empate!" :
-                            elh2.textContent = `Es el turno del jugador ${gameflow.getCurrentPlayer().numero}.`;
+                            elh2.textContent = `Es el turno de ${gameflow.getCurrentPlayer().nombre}.`;
                         }
                     }
                 })
@@ -177,7 +231,7 @@ const DOMcontroller = (function() {
 
     }
 
-    return {gameStart}
+    return {nombres, validateInputs}
     
 
 })(); 
