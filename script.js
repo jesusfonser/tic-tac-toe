@@ -27,13 +27,26 @@ const gameboard = (function(){
 const gameflow = (function (){
 
     let jugadores = [Player("O", 1), Player("X", 2)];
+    let currentPlayer = jugadores[0];
+    let fin = false;
+
+    const getFin = () => fin;
+
+    const getCurrentPlayer = () => currentPlayer;
+
+    function changeTurn (){
+        currentPlayer === jugadores[0] ? currentPlayer = jugadores[1] :
+        currentPlayer = jugadores[0];
+    }
 
     function checkEndHor(){
         for (let i = 0; i < 3; i++){
             if (gameboard.board[i].every((e) => e.getOwner() === gameboard.board[i][0].getOwner()) &&
                 gameboard.board[i][0].getOwner() !== "-"){
                 console.log("Fin de la partida por victoria horizontal.");
-            } 
+                fin = true;
+            }
+            else return false;
         }
     }
 
@@ -45,6 +58,7 @@ const gameflow = (function (){
             }
             if (arrVer.every((e) => e === arrVer[0]) && arrVer[0] !== "-"){
                 console.log("Fin de la partida por victoria vertical.");
+                fin = true;
             }
             else arrVer = [];
         }
@@ -71,16 +85,18 @@ const gameflow = (function (){
             arrDiag2[0] !== "-")
             ){
                 console.log("Fin de la partida por victoria diagonal.")
+                fin = true;
             }
     }
 
     const checkEnd = () => {
         checkEndHor();
-        checkEndVer();
-        checkEndDiag();
+        if(!fin) checkEndVer();
+        if(!fin) checkEndDiag();  
+        if(!fin) changeTurn();
     }
 
-    return {checkEnd}
+    return {checkEnd, getFin, getCurrentPlayer}
 
 })()
 
@@ -109,11 +125,52 @@ function Player(simboloIn, numeroIn){
 
     let simbolo = simboloIn;
     let numero = numeroIn;
-    
+
     return {simbolo, numero}
 
 }
 
+
 const DOMcontroller = (function() {
 
-})();
+    const divboard = document.getElementById("gameboard");
+    const elh2 = document.getElementById("texto");
+    const casillasDOM = Array.from(document.querySelectorAll("#gameboard > div"));
+    let board = [[], [], []];
+
+    function changeImg (player, div) {
+        let img = document.createElement("img");
+        player.simbolo === "O" ? img.setAttribute("src", "./images/O.svg") :
+        img.setAttribute("src", "./images/X.svg");
+        div.appendChild(img);
+    }
+
+    const gameStart = () => {
+
+        for (let i = 0; i < 3; i++){
+            for (let j = 0; j < 3; j++){
+                board[i][j] = casillasDOM.shift();
+                
+                board[i][j].addEventListener("click", function(){
+                    if(gameboard.board[i][j].getOwner() === "-" && !gameflow.getFin()){
+                        changeImg(gameflow.getCurrentPlayer(), this);
+                        gameboard.board[i][j].claim(gameflow.getCurrentPlayer().simbolo);
+                        
+                        if (gameflow.getFin()){
+                            elh2.textContent = `El ganador es... ¡¡EL JUGADOR ${gameflow.getCurrentPlayer().numero}!!`;
+                        }
+
+                    }
+                })
+            }
+        }
+
+
+        
+
+    }
+
+    return {gameStart}
+    
+
+})(); 

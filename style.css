@@ -20,3 +20,8 @@ body{
 #gameboard > div:nth-child(-n+6){
     border-bottom: 2px black solid;
 }
+
+img{
+    width: 80px;
+    height: 80px;
+}
