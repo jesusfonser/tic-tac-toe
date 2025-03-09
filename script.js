@@ -10,18 +10,7 @@ const gameboard = (function(){
         }
     }
     
-    const printBoard = () => {
-        let boardPrinted = [[],[],[]]
-        
-        for (let i = 0; i < rows; i++){
-            for (let j = 0; j < columns; j++){
-                boardPrinted[i][j] = board[i][j].getOwner();
-            }
-            console.log(boardPrinted[i]);
-        }
-    }
-
-    return {board, printBoard};
+    return {board};
 })();
 
 const gameflow = (function (){
@@ -49,7 +38,6 @@ const gameflow = (function (){
         for (let i = 0; i < 3; i++){
             if (gameboard.board[i].every((e) => e.getOwner() === gameboard.board[i][0].getOwner()) &&
                 gameboard.board[i][0].getOwner() !== "-"){
-                console.log("Fin de la partida por victoria horizontal.");
                 fin = true;
             }
         }
@@ -62,7 +50,6 @@ const gameflow = (function (){
                 arrVer.push(gameboard.board[j][i].getOwner());
             }
             if (arrVer.every((e) => e === arrVer[0]) && arrVer[0] !== "-"){
-                console.log("Fin de la partida por victoria vertical.");
                 fin = true;
             }
             else arrVer = [];
@@ -89,7 +76,6 @@ const gameflow = (function (){
             (arrDiag2.every((e) => e === arrDiag2[0]) &&
             arrDiag2[0] !== "-")
             ){
-                console.log("Fin de la partida por victoria diagonal.")
                 fin = true;
             }
     }
@@ -112,12 +98,9 @@ function Cell(){
     const getOwner = () => owner;
     
     const claim = (player) => {
-        if (owner !== "-") 
-        console.log("Casilla ya ocupada.");
-        
-        else{
+
+        if(owner === "-"){
             owner = player;
-            gameboard.printBoard();
             gameflow.checkEnd();
         }
     } 
@@ -141,7 +124,7 @@ const DOMcontroller = (function() {
     const body = document.querySelector("body");
     const divboard = document.getElementById("gameboard");
     const elh2 = document.getElementById("texto");
-    const casillasDOM = Array.from(document.querySelectorAll("#gameboard > div"));
+    let casillasDOM = Array.from(document.querySelectorAll("#gameboard > div"));
     let board = [[], [], []];
     let turno = 0;
 
@@ -160,7 +143,7 @@ const DOMcontroller = (function() {
         gameflow.setCurrentPlayer();
         turno = 0;
         gameflow.setFin();
-        gameStart();
+        elh2.textContent = `Es el turno de ${gameflow.getCurrentPlayer().nombre}.`;
     }
 
     function changeImg (player, div) {
