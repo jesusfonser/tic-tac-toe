@@ -46,7 +46,6 @@ const gameflow = (function (){
                 console.log("Fin de la partida por victoria horizontal.");
                 fin = true;
             }
-            else return false;
         }
     }
 
