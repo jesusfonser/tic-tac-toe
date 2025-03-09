@@ -92,7 +92,7 @@ const gameflow = (function (){
     const checkEnd = () => {
         checkEndHor();
         if(!fin) checkEndVer();
-        if(!fin) checkEndDiag();  
+        if(!fin) checkEndDiag();
         if(!fin) changeTurn();
     }
 
@@ -137,6 +137,7 @@ const DOMcontroller = (function() {
     const elh2 = document.getElementById("texto");
     const casillasDOM = Array.from(document.querySelectorAll("#gameboard > div"));
     let board = [[], [], []];
+    let turno = 0;
 
     function changeImg (player, div) {
         let img = document.createElement("img");
@@ -145,7 +146,10 @@ const DOMcontroller = (function() {
         div.appendChild(img);
     }
 
-    const gameStart = () => {
+    const gameStart = (element) => {
+
+        element.remove()
+        elh2.textContent = "Es el turno del jugador 1.";
 
         for (let i = 0; i < 3; i++){
             for (let j = 0; j < 3; j++){
@@ -159,7 +163,11 @@ const DOMcontroller = (function() {
                         if (gameflow.getFin()){
                             elh2.textContent = `El ganador es... ¡¡EL JUGADOR ${gameflow.getCurrentPlayer().numero}!!`;
                         }
-
+                        else {
+                            turno++
+                            turno === 9 ? elh2.textContent = "¡Empate!" :
+                            elh2.textContent = `Es el turno del jugador ${gameflow.getCurrentPlayer().numero}.`;
+                        }
                     }
                 })
             }
