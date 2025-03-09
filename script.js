@@ -32,6 +32,8 @@ const gameflow = (function (){
 
     const getFin = () => fin;
 
+    const setFin = () => fin = false;
+
     const getCurrentPlayer = () => currentPlayer;
 
     const setCurrentPlayer = () => currentPlayer = jugadores[0];
@@ -99,7 +101,7 @@ const gameflow = (function (){
         if(!fin) changeTurn();
     }
 
-    return {checkEnd, getFin, getCurrentPlayer, setCurrentPlayer, addPlayer}
+    return {checkEnd, getFin, setFin, getCurrentPlayer, setCurrentPlayer, addPlayer}
 
 })()
 
@@ -143,6 +145,24 @@ const DOMcontroller = (function() {
     let board = [[], [], []];
     let turno = 0;
 
+    const resetGame = () => {
+        board = [[], [], []];
+        for (let i = 0; i < 3; i++){
+            for (let j = 0; j < 3; j++){
+                gameboard.board[i][j] = Cell();
+            }
+        }
+        
+        let casillas = Array.from(document.getElementsByClassName("casilla"));
+        for (casilla of casillas){
+            casilla.innerHTML = '';
+        }
+        gameflow.setCurrentPlayer();
+        turno = 0;
+        gameflow.setFin();
+        gameStart();
+    }
+
     function changeImg (player, div) {
         let img = document.createElement("img");
         player.simbolo === "O" ? img.setAttribute("src", "./images/O.svg") :
@@ -173,6 +193,12 @@ const DOMcontroller = (function() {
             gameflow.setCurrentPlayer();
             buttonAccept.remove();
             divInputs.remove();
+
+            const reset = document.createElement("button");
+            reset.setAttribute("onclick", "DOMcontroller.resetGame()")
+            reset.innerText = "Reiniciar"
+            body.appendChild(reset);
+
             gameStart();
         }
     }
@@ -231,7 +257,7 @@ const DOMcontroller = (function() {
 
     }
 
-    return {nombres, validateInputs}
+    return {nombres, validateInputs, resetGame}
     
 
 })(); 
